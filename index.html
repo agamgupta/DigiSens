@@ -1,0 +1,375 @@
+<html>
+<head>
+    <title>DigiSens</title>
+    <!-- See more examples at developer.leapmotion.com -->
+    <!--<base href="https://editor-leapmotion.netdna-ssl.com/leapmotion-examples/javascript/d14b6827d7879ba0dc80848a6cb999184f830c19/v2/hello-leap.html.livegit" />-->
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <link href='http://fonts.googleapis.com/css?family=Oxygen' rel='stylesheet' type='text/css'>
+    <script src="http://code.jquery.com/jquery-2.1.4.js"></script>
+    <script src="http://js.leapmotion.com/leap-0.6.4.js"></script>
+    <script src="http://js.leapmotion.com/leap-plugins-0.1.6.js"></script>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/three.js/r67/three.js"></script>
+    <script src="http://fgnass.github.io/spin.js/spin.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+</head>
+    
+<body id='body'>
+    <div class="content">
+        
+        <div class="shipwrapper">
+            <img id="ship" src="spacecat.png" width="340">
+        </div>
+        
+        <h3 id='heading'></h3>
+        
+        <div class="pinwrapper">
+            <div class="pin"></div>
+            <div class="pin"></div>
+            <div class="pin"></div>
+            <div class="pin"></div>
+            <div class="pin"></div>
+        </div>
+        <div id='spinner' style='float:right'></div>
+ 
+        
+        <div class="digits">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        
+        <!--<div class="spacecat">-->
+            
+            <div class="catwrapper">
+                <img class="cats" id="cat1" src="grouponcat.png">
+                <img class="cats" id="cat2" src="grouponcat.png">
+                <img class="cats" id="cat3" src="grouponcat.png">
+                <img class="cats" id="cat4" src="grouponcat.png">
+                <img class="cats" id="cat5" src="grouponcat.png">
+            </div>
+            
+        <!--</div> !-- spacecat -->
+        
+    </div> <!-- content -->
+    
+    <div class="welcome">
+        <div class="text">
+        </div>
+    </div>
+    
+    
+    <script>
+    // CATS MOVE UP //
+    function numNotNull(arr){
+        var notNull = 0;
+        for (var i=0;i<arr.length;i++){
+            if (arr[i]){
+                notNull += 1;
+            }
+        }
+        return notNull;
+    }        
+    function catAnimate(num_entries) {
+        $("#cat"+num_entries).animate({
+            top: "-300px"
+        });
+    } 
+    function catAnimateBackwardsOne(num_entries) {
+        $("#cat"+num_entries).animate({
+            top: "+300px"
+        });
+    } 
+    function catAnimateBackwards(num_entries) {
+        $('.pin').css("border-style","solid");
+        $('.pin').css("border-color","red");
+        $("#cat1").animate({top: "+300px"},200,function(){
+            $("#cat2").animate({top: "+300px"},200,function(){
+                $("#cat3").animate({top: "+300px"},200,function(){
+                    $("#cat4").animate({top: "+300px"},200,function(){
+                        $("#cat5").animate({top: "+300px"},200,function(){
+                            window.location.reload(true);
+                        });
+                    });
+                });
+            });
+        });
+    }
+    
+        
+    // CATS TO GO SHIP //
+    
+    function catsIntoShip(){
+        $('.pin').css("border-style","solid");
+        $('.pin').css("border-color","green");
+        $(".cats").animate({
+            top: "-550px",
+            opacity: "0",
+            height: "15px",
+            width: "15px"
+        });
+    }
+    
+    // SHIP FLIES AWAY //
+        
+//    $(".shipwrapper").click(function(){
+//        $(".shipwrapper").animate({
+//        opacity: "0.5",
+//        bottom: "+50px"
+//        });
+//    });
+    function pausecomp(millis)
+     {
+      var date = new Date();
+      var curDate = null;
+      do { curDate = new Date(); }
+      while(curDate-date < millis);
+    }
+    function shipFade2(){
+        $(".shipwrapper").fadeTo( "slow" , 0.001,function(){window.location.reload(true);});
+        welcomeScreen();
+    }    
+    function shipFade(){
+        $("#ship").animate({
+            opacity: "100",
+            height: "600px",
+            width: "1000px"
+        }, 500,function(){
+            shipFade2();
+        });
+    }
+        
+        
+   function welcomeScreen(){
+        $(".welcome").css("background-color","green");
+        $(".welcome .text").html("<h3>Welcome!</h3>");
+        //$(".content").slideUp("slow");
+   }
+        
+    </script>
+    
+    
+    
+    <script type="text/javascript">
+        //OMAR
+        //var truePin = [1,4,2,5,3]
+        var truePin = [5,5,5,5,5]
+        var failTrue = false;
+        var succeedTrue = false;
+        var spinTrue = false;
+        
+        var num_entries = 0;
+        var delayNum = 0;
+        
+        var disp0 = 90;
+        var disp1 = 74;
+        var disp2 = 84;
+        var disp3 = 80;
+        var disp4 = 64;
+
+        var size = 50;
+
+        var consistencyArray = new Array(size);
+        var pin = new Array(5);
+        var cctr = 0;
+        var p = 0;
+        var flag = 0;
+
+
+        function concatData(id, data) {
+          return id + ": " + data + "<br>";
+        }
+
+        function getFingerName(fingerType) {
+          switch(fingerType) {
+            case 0:
+              return 'Thumb';
+            break;
+
+            case 1:
+              return 'Index';
+            break;
+
+            case 2:
+              return 'Middle';
+            break;
+
+            case 3:
+              return 'Ring';
+            break;
+
+            case 4:
+              return 'Pinky';
+            break;
+          }
+        }
+
+        function concatJointPosition(id, position) {
+          return id + ": " + position[0] + ", " + position[1] + ", " + position[2] + "<br>";
+        }
+
+        function getDisplacementValue(finger){
+          var a = finger.mcpPosition[0] - finger.tipPosition[0];
+          var b = finger.mcpPosition[1] - finger.tipPosition[1];
+          var c = finger.mcpPosition[2] - finger.tipPosition[2];
+          var d = Math.sqrt((a*a)+(b*b)+(c*c));
+          return d;
+        }
+
+        function getFingerStatus(Displacement, id){
+          if ((id == 0) && (Displacement > 0.98*disp0))
+            return 1;
+          else if ((id == 1) && (Displacement > 0.9*disp1))
+            return 1;
+          else if((id == 2) && (Displacement > 0.9*disp2))
+            return 1;
+          else if((id == 3) && (Displacement > 0.95*disp3))
+            return 1;
+          else if((id == 4) && (Displacement > 0.95*disp4))
+             return 1;
+          else
+             return 0;
+        }
+
+
+        var output = document.getElementById('output');
+        var frameString = "", handString = "", fingerString = "";
+        var hand, finger;
+
+        // Leap.loop uses browser's requestAnimationFrame
+        var options = { enableGestures: true };
+
+
+        // Main Leap Loop
+        Leap.loop(options, function(frame) {
+          frameString = concatData("frame_id", frame.id);
+          frameString += concatData("num_hands", frame.hands.length);
+          frameString += concatData("num_fingers", frame.fingers.length);
+          frameString += "<br>";
+
+          // Showcase some new V2 features
+          for (var i = 0, len = frame.hands.length; i < len; i++) {
+            hand = frame.hands[i];
+
+            // Helpers for thumb, pinky, etc.
+            fingerString = "<br>"
+            var num = 0;
+
+            for (var j = 0, len2 = hand.fingers.length; j < len2; j++) {
+              finger = hand.fingers[j];
+              //fingerString += concatData(getFingerName(j), getDisplacementValue(finger))
+              //if(j != 0){
+              if (getFingerStatus(getDisplacementValue(finger),j))
+                num++;
+              //}
+            }
+
+            fingerString += concatData("Number of fingers shown", num);
+
+
+            //Checking consistency of input
+            consistencyArray[cctr] = num;
+            if(cctr == size-1)
+              cctr = 0;
+            else
+              cctr++;
+
+            flag = 1;
+
+            for(var l = 0; l<size; l++){
+              if(consistencyArray[0] != consistencyArray[l])
+                {
+                  flag = 0;
+                  break;
+                }
+            }
+
+            if(flag && (p!=5))
+            {
+              if(num == 0){
+                if (p!=0)
+                {
+                    pin[--p] = consistencyArray[0];
+                    catAnimateBackwardsOne(num_entries);
+                    num_entries--;
+                }
+              }
+              else {
+                pin[p] = consistencyArray[0];
+                p++;
+              }
+              for (var i = 0; i < size; i++) 
+                  consistencyArray[i] = 9;
+            }
+            
+            //Check complete
+              
+//            console.log(pin);
+              
+            function numNotNull(arr){
+                var notNull = 0;
+                for (var i=0;i<arr.length;i++){
+                    if (arr[i]){
+                        notNull += 1;
+                    }
+                }
+                return notNull;
+            }
+            function arrComp(a,b){
+                //assumes both same length
+                for(i=0;i<a.length;i++){
+                    for(j=0;j<b.length;j++){
+                        if(b[j] != a[i]){
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            }
+              
+            function failHandler(){
+                for (var i=0;i<pin.length;i++){
+                    catAnimateBackwards(i);
+                }
+                //$('.pinwrapper').css("margin-top","0em");
+                //$('#spinner').html("<img height=90 width=100 src="+'https://cdn1.iconfinder.com/data/icons/basic-ui-elements-color/700/012_restart-512.png'+" />");
+                $(".welcome").css("background-color","red");
+                $(".welcome .text").html("<h3>Sorry, wrong PIN</h3>");
+                $(".welcome .text").css("color","black");
+                //$(".content").slideUp("slow");
+            }
+              
+            if (numNotNull(pin) > num_entries){
+                num_entries += 1;
+                catAnimate(num_entries);
+            }
+            else if (numNotNull(pin) == 5 && !failTrue){
+                if (arrComp(pin,truePin)){
+                    delayNum += 1;
+                }
+                else {
+                    failTrue = true;
+                    failHandler();
+                }
+            }
+            else if (numNotNull(pin) >= 1 && !failTrue && !succeedTrue && !spinTrue){
+                //$('#spinner').html("<i class='icon-spin icon-spinner' id='progress'></i>");
+                spinTrue = true;
+            }
+
+            if (delayNum > 50 && !succeedTrue){
+                //$('#spinner').html("<img height=90 width=100 src="+'http://www.callthebailguy.com/file/2014/03/check-mark.png'+" />");
+                catsIntoShip();
+                shipFade();
+                succeedTrue = true;
+            }
+            fingerString += "<br>";
+            frameString += fingerString;
+          }
+        });
+
+    </script>
+</body>
+    
+</html>
