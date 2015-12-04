@@ -1,0 +1,1 @@
+This is the code we submitted at NU Wildhacks. "atmAuthDebug" is the main html file we worked on, and we pulled in concepts, libraries, and techniques from many different sources to complete it. Our hard work paid off and we made it to the final round of judging!
